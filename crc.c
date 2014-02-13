@@ -67,26 +67,25 @@ int is_quotient_zero(struct Message message){
 
 
 //get_remainder computes the remainder of a message
-int get_remainder(struct Message message){
+unsigned int get_remainder(struct Message message){
 	 //Set up the divisor polynomial
 	 struct Message divisor;
 	 divisor.quarter[4] = CRC_DIVISOR;
 	 int i; 
-	 for(i = 0; i < 4; i++){
+	 for(i = 0; i < 3; i++){
 		divisor.quarter[i] = 0; 
 	 }  
-	 message.quarter[0] = 0; //Padding with zeroes
+	 divisor.quarter[3] = POWER_32;
 
 	 while(!is_quotient_zero(message)){
-		 //printf("Hi\n");
 		while(!is_divisor_smaller(message, divisor)){
-			//printf("Hi2\n");
 			//Keep right shifting divisor until it is legal to divide the quotient
 			divisor = right_shift_message(divisor);
 		} 
 		message = get_xor(message, divisor);
 	 }
 
+	 message = get_xor(message, divisor);
 	 //The non-quotient portion, namely the last 32 bits of the message is the remainder
 	 return message.quarter[0]; 
 
@@ -94,13 +93,15 @@ int get_remainder(struct Message message){
 
 //Given a message, appends the CRC division remainder. 
 struct Message apply_crc(struct Message message){
+	message.quarter[0] = 0;
 	message.quarter[0] = get_remainder(message);
 	return message;
 }
 
 
 //Given a CRC output message, checks if there are any errors
-int detect_error(struct Message message){
+unsigned int detect_error(struct Message message){
 	unsigned int remainder = get_remainder(message);
+//	printf("%u\n",remainder);
 	return (remainder);
 }

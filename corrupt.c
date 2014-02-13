@@ -5,14 +5,14 @@
 
 //Generate one bit in the message
 struct Message corrupt_one_bit(struct Message message){
-	srand(time(NULL));
+//	srand(time(NULL));
 	int i = rand() % 128;
-	return flip_bit(message, i)	
+	return flip_bit(message, i);	
 }
 
 
 struct Message corrupt_two_bits(struct Message message){
-	srand(time(NULL));
+//	srand(time(NULL));
 	int i = rand() % 128;
 	int j = i;
 	while(i  == j){
@@ -26,13 +26,13 @@ struct Message corrupt_two_bits(struct Message message){
 //Generate a bursty error of length
 struct Message corrupt_bursty(struct Message message, int index){
 	//Assumes index < 128 - 30
-	srand(time(NULL));
+//	srand(time(NULL));
 	int i;
 	//Extreme two bits flip necessarily
 	message = flip_bit(message, index);
 	message = flip_bit(message, index + 29);
 	for(i = 1; i < 29; i++){
-		if(rand()%2){
+		if(rand()%2 == 1){
 			message = flip_bit(message, index + i);
 		}
 	}
@@ -41,17 +41,20 @@ struct Message corrupt_bursty(struct Message message, int index){
 
 
 struct Message corrupt_random(struct Message message, int count){
-	srand(time(NULL));
+//	srand(time(NULL));
 	struct Message corruptor = get_new_message();
 	while(count){
 		int bit_pos = rand() % 128;
 		struct Message new_corruptor = set_bit(corruptor, bit_pos);
-		if(!is_equal(new_corruptor)){
+		if(!is_equal(corruptor,new_corruptor)){
 			count --;	
+//			printf("%d ",bit_pos);
 			corruptor = new_corruptor;
 			//A new bit has been set
 		}
 	}
+
+//	printf("\n");
 
 	message = get_xor(message, corruptor);
 	return message;

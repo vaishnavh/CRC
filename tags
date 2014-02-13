@@ -1,0 +1,44 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+CORRUPT_H_	corrupt.h	2;"	d
+CRC_DIVISOR	apply_crc.h	10;"	d
+CRC_DIVISOR	crc.h	6;"	d
+CRC_H_	crc.h	2;"	d
+GET_LAST_BIT	apply_crc.h	11;"	d
+GET_LAST_BIT	crc.h	7;"	d
+MESSAGE_H_	message.h	2;"	d
+MESSAGE_LENGTH	message.h	7;"	d
+Message	message.h	/^struct Message{$/;"	s
+POWER_32	message.h	6;"	d
+STRING_LENGTH	generate.c	6;"	d	file:
+apply_crc	crc.c	/^struct Message apply_crc(struct Message message){$/;"	f
+byte_to_binary	message.c	/^void byte_to_binary(unsigned int x, FILE* file_stream){$/;"	f
+corrupt_bursty	corrupt.c	/^struct Message corrupt_bursty(struct Message message, int index){$/;"	f
+corrupt_one_bit	corrupt.c	/^struct Message corrupt_one_bit(struct Message message){$/;"	f
+corrupt_random	corrupt.c	/^struct Message corrupt_random(struct Message message, int count){$/;"	f
+corrupt_two_bits	corrupt.c	/^struct Message corrupt_two_bits(struct Message message){$/;"	f
+detect_error	crc.c	/^int detect_error(struct Message message){$/;"	f
+flip_bit	message.c	/^struct Message flip_bit(struct Message message, int bit_pos){$/;"	f
+get_new_message	message.c	/^struct Message get_new_message(){$/;"	f
+get_remainder	apply_crc.h	/^int get_remainder(struct Message message){$/;"	f
+get_remainder	crc.c	/^int get_remainder(struct Message message){$/;"	f
+get_xor	apply_crc.h	/^struct Message get_xor(struct Message message_a, struct Message message_b){$/;"	f
+get_xor	message.c	/^struct Message get_xor(struct Message message_a, struct Message message_b){$/;"	f
+is_divisor_smaller	apply_crc.h	/^int is_divisor_smaller(struct Message quotient, struct Message divisor){$/;"	f
+is_divisor_smaller	crc.c	/^int is_divisor_smaller(struct Message quotient, struct Message divisor){$/;"	f
+is_equal	message.c	/^int is_equal(struct Message message_a, struct Message message_b){$/;"	f
+is_quotient_zero	apply_crc.h	/^int is_quotient_zero(struct Message message){$/;"	f
+is_quotient_zero	crc.c	/^int is_quotient_zero(struct Message message){$/;"	f
+main	CRC.c	/^int main(int argc, char** argv){$/;"	f
+main	apply_crc.c	/^int main(int argc, char** argv){$/;"	f
+main	apply_crc.h	/^int main(int argc, char** argv){$/;"	f
+main	generate.c	/^int main(int argc, char **argv){$/;"	f
+print_message	message.c	/^void print_message(struct Message message, FILE* file_stream){$/;"	f
+quarter	message.h	/^	unsigned int quarter[5]; $/;"	m	struct:Message
+right_shift_message	apply_crc.h	/^struct Message right_shift_message(struct Message message){$/;"	f
+right_shift_message	crc.c	/^struct Message right_shift_message(struct Message message){$/;"	f
+set_bit	message.c	/^struct Message set_bit(struct Message message, int bit_pos){$/;"	f
