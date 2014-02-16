@@ -13,8 +13,8 @@
 #define ODD_MAX 127
 
 int main(int argc, char** argv){
-	if(argc < 7){
-		fprintf(stderr,"To run program enter \"./ec <input_file> <output_file> <error_1> <error_2> <error_3> <error_4>\"\n");
+	if(argc < 3){
+		fprintf(stderr,"To run program enter \"./ec <input_file> <output_file>\"\n");
 		exit(1);
 	}
 
@@ -23,15 +23,12 @@ int main(int argc, char** argv){
 		fprintf(stderr, "Input file cannot be opened\n");
 		exit(1);
 	}
-	FILE* output_file[5];
-	int i;
-	for(i = 0; i < 5; i++){
-		output_file[i] = fopen(argv[2+i], "w"); //Open file to print MESSAGE_LENGTH+32 bit output strings.
-		if(output_file[i] == NULL){
-			fprintf(stderr, "Output file \"%s\" cannot be opened\n",argv[2+i]);
-			exit(1);
-		}	
-	}
+	FILE* output_file;
+	output_file = fopen(argv[2], "w"); //Open file to print MESSAGE_LENGTH+32 bit output strings.
+	if(output_file == NULL){
+		fprintf(stderr, "Output file \"%s\" cannot be opened\n",argv[2]);
+		exit(1);
+	}	
 
 	int burst_successes = 0;
 	int random_error_successes = 0;
@@ -67,25 +64,31 @@ int main(int argc, char** argv){
 		//We now have a message. We get the remainder and store it in the
 		//padded region.
 		message = apply_crc(message);
-		print_message(message, output_file[0]);
-		putc('\n',output_file[0]);
+		
+		fprintf(output_file,"Input: ");
+		int k;
+		for(k = 4; k > 0; k--){
+			byte_to_binary(message.quarter[k], output_file);
+		}
+		fprintf(output_file,"\nCRC: ");	
+		print_message(message, output_file);
+		fprintf(output_file,"\n\n");
 	
 		struct Message corrupt_message;
 		
 		//One bit errors
-		int k;
 		
 		for(k = 0; k < 10; k++){
 			corrupt_message = corrupt_one_bit(message);
-			fprintf(output_file[1],"Original String with CRC: \n");
-			print_message(message, output_file[1]);
-			fprintf(output_file[1],"\nCorrupt String:\n");
-			print_message(corrupt_message, output_file[1]);
+			fprintf(output_file,"Original String with CRC: ");
+			print_message(message, output_file);
+			fprintf(output_file,"\nCorrupt String: ");
+			print_message(corrupt_message, output_file);
 			if(detect_error(corrupt_message)){
 				one_bit_successes ++;
-				fprintf(output_file[1],"\nCRC Check: passed\n\n");
+				fprintf(output_file,"\nCRC Check: Failed\n\n");
 			}else{
-				fprintf(output_file[1],"\nCRC Check: failed\n\n");
+				fprintf(output_file,"\nCRC Check: Passed\n\n");
 			}
 			count++;
 		}
@@ -94,15 +97,33 @@ int main(int argc, char** argv){
 		//Two bit errors
 		for(k = 0; k < 10; k++){
 			corrupt_message = corrupt_two_bits(message);
-			fprintf(output_file[2],"Original String with CRC: \n");
-			print_message(message, output_file[2]);
-			fprintf(output_file[2],"\nCorrupt String:\n");
-			print_message(corrupt_message, output_file[2]);
+			fprintf(output_file,"Original String with CRC: ");
+			print_message(message, output_file);
+			fprintf(output_file,"\nCorrupt String: ");
+			print_message(corrupt_message, output_file);
 			if(detect_error(corrupt_message)){
-				fprintf(output_file[2],"\nCRC Check: passed\n\n");
+				fprintf(output_file,"\nCRC Check: Failed\n\n");
 				two_bit_successes ++;
 			}else{
-				fprintf(output_file[2],"\nCRC Check: failed\n\n");
+				fprintf(output_file,"\nCRC Check: Passed\n\n");
+			}
+		}
+
+		//Random odd number of errors
+		int m;
+		for(m = 0; m < 10; m++){
+			k = (rand()%63)*2 + 3; //Generates 3 till 127 - only odd numbers 
+			corrupt_message = corrupt_random(message, k);
+			fprintf(output_file,"Original String with CRC: ");
+			print_message(message, output_file);
+			fprintf(output_file,"\nCorrupt String: ");
+			print_message(corrupt_message, output_file);
+			fprintf(output_file,"\nNumber of Errors: %d\n",k);
+			if(detect_error(corrupt_message)){
+				fprintf(output_file,"CRC Check: Failed\n\n");
+				random_error_successes ++;
+			}else{
+				fprintf(output_file,"CRC Check: Passed\n\n");
 			}
 		}
 
@@ -110,47 +131,28 @@ int main(int argc, char** argv){
 		for(k = 0; k < 10; k++){
 			int bit_pos = rand()%98;
 			corrupt_message = corrupt_bursty(message, bit_pos);
-			fprintf(output_file[4],"Original String with CRC: \n");
-			print_message(message, output_file[4]);
-			fprintf(output_file[4],"\nCorrupt String:\n");
-			print_message(corrupt_message, output_file[4]);
+			fprintf(output_file,"Original String with CRC: ");
+			print_message(message, output_file);
+			fprintf(output_file,"\nCorrupt String: ");
+			print_message(corrupt_message, output_file);
 			if(detect_error(corrupt_message)){
-				fprintf(output_file[4],"\nCRC Check: passed\n\n");
+				fprintf(output_file,"\nCRC Check: Failed\n\n");
 				burst_successes ++;
 			}else{
-				fprintf(output_file[4],"\nCRC Check: failed\n\n");
+				fprintf(output_file,"\nCRC Check: Passed\n\n");
 			}
 		}
 		
-		//Random odd number of errors
-		for(k = 3; k <= ODD_MAX; k += 2){
-			int m;
-			for(m = 0; m < 10; m++){
-				corrupt_message = corrupt_random(message, k);
-				fprintf(output_file[3],"Original String with CRC: \n");
-				print_message(message, output_file[3]);
-				fprintf(output_file[3],"\nCorrupt String:\n");
-				print_message(corrupt_message, output_file[3]);
-				fprintf(output_file[3],"\nNo. of errors: %d\n",k);
-				if(detect_error(corrupt_message)){
-					fprintf(output_file[3],"CRC Check: passed\n\n");
-					random_error_successes ++;
-				}else{
-					fprintf(output_file[3],"CRC Check: failed\n\n");
-				}
-			}
-		}
 			
 	}
-	
+/*	
 	printf("One-bit successes: %d of %d\n",one_bit_successes,count);
 	printf("Two-bit successes: %d of %d\n",two_bit_successes,count);
 	printf("Odd-Random-bit successes: %d of %d\n",random_error_successes,count*(ODD_MAX - 3 +2)/2);
 	printf("Bursty successes: %d of %d\n",burst_successes,count);
-
+*/
 	fclose(input_file);
-	for(i = 0; i < 5; i++){
-		fclose(output_file[i]);
-	}
+	fclose(output_file);
+	
 	return 0;
 }

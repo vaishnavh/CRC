@@ -19,7 +19,8 @@ struct Message{
  */
 
 struct Message get_new_message();
-void print_message(struct Message,FILE*);
+void print_message(struct Message, FILE*);
+void byte_to_binary(unsigned int, FILE*);
 struct Message flip_bit(struct Message, int);
 struct Message set_bit(struct Message, int);
 struct Message get_xor(struct Message, struct Message);
